@@ -1,0 +1,39 @@
+services:
+
+  web:
+    volumes:
+      - ./backend:/app
+      #- ./uploads:/app/uploads
+    build: ./backend
+    container_name: fastapi_app
+    ports:
+      - "3001:3001"
+    environment:
+      - DATABASE_URL=postgresql+asyncpg://postgres:123456@db:5432/coffee_db
+    depends_on:
+      - db
+
+  db:
+    image: postgres:17.2
+    container_name: postgres_db
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=123456
+      - POSTGRES_DB=coffee_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d coffee_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # frontend: #ТУТ ЗАПУСТИТЬ ФРОНТЕНД
+  #   build: ./frontend
+  #   container_name: frontend
+  #   ports:
+  #     - "5500:5500"  #Если меняете этот порт, то пишите в тг: @vlados7529
+volumes:
+  postgres_data:

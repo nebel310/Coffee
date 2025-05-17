@@ -95,9 +95,9 @@ app.add_middleware(
 
 
 
-#Раскоментить, когда будешь писать докер.
-if __name__ == "__main__":
-    uvicorn.run(
-        "main:app",
-        reload=True,
-    )
+#Раскоментить, когда будешь писать докер. - хуйня
+# if __name__ == "__main__":
+#     uvicorn.run(
+#         "main:app",
+#         reload=True,
+#     )
