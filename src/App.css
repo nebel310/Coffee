@@ -1,0 +1,422 @@
+html, body {
+	margin: 0;
+	padding: 0;
+	width: 100%;
+	height: 100%;
+	background: rgb(214, 187, 135); /* тот же, что у .mainBody */
+  }
+.mainBody {
+	width: 100%;
+	min-height: 100vh;
+	background: rgb(214, 187, 135); /* основной фон */
+	overflow-x: hidden; /* на всякий случай */
+  }
+  
+  header {
+	width: 100%;
+	height: 100px;
+	position: fixed;
+	top: 0;
+	left: 0;
+	background: rgb(199, 143, 74);
+	z-index: 100;
+  }
+  
+  footer {
+	width: 100%;
+	height: 100px;
+	position: fixed;
+	bottom: 0;
+	left: 0;
+	background: rgb(199, 143, 74);
+	z-index: 100;
+  }
+  
+  .logoContainer {
+	float: left;
+	height: 100%;
+  }
+  
+  .menuContainer {
+	float: right;
+	height: 100%;
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	padding-right: 15px;
+  }
+  
+  .shushaIconButton:hover {
+	transform: scale(1.05);
+  }
+  .shopContainer {
+	width: 100%;
+	padding: 130px 5% 150px 5%;
+	box-sizing: border-box;
+  }
+  .shopPositionContainer {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 20px;
+	padding: 20px;
+	margin-bottom: 15px;
+	background: rgb(199, 143, 74);
+	border-radius: 50px;
+  }
+  
+  .shopPositionImg {
+	width: 200px;
+	height: 200px;
+	object-fit: cover;
+	border-radius: 30px;
+  }
+  
+  .shopPositionName {
+	flex: 1;
+	padding: 10px;
+  }
+  
+  .shopPositionName h2 {
+	margin: 0 0 10px 0;
+  }
+  
+  .shopPositionButtons {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: space-between;
+	gap: 15px;
+  }
+  
+  .shopPositionButtonTop,
+  .shopPositionButtonBot {
+	width: 100px;
+	height: 50px;
+	background: rgb(214, 187, 135);
+	border: none;
+	border-radius: 25px;
+	font-size: 18px;
+	text-align: center;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+  }
+  
+  .shopPositionButtonAddition {
+	margin-top: 10px;
+	background: rgb(214, 187, 135);
+	border: none;
+	border-radius: 15px;
+	padding: 5px 10px;
+  }
+  
+  .datetimeContainer {
+	display: flex;
+	align-items: center;
+	padding-left: 20px;
+	height: 100%;
+  }
+  
+  .datetimer p {
+	margin: 0;
+  }
+  
+  .shushaIconButton {
+	width: 60px;
+	height: 60px;
+	background: rgb(214, 187, 135);
+	border: none;
+	border-radius: 20px;
+	margin-left: 10px;
+	box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: 0;
+	transition: transform 0.2s ease;
+  }
+  .shushaIconButton img {
+	width: 30px;
+	height: 30px;
+  }
+  
+  .datetimeContainer {
+	display: flex;
+	align-items: center;
+	justify-content: flex-start;
+	gap: 15px;
+	height: 100%;
+	padding-left: 20px;
+  }
+  
+  .dateBlock, .timeBlock {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	background: rgb(214, 187, 135);
+	padding: 8px 15px;
+	border-radius: 15px;
+	font-size: 18px;
+	font-weight: 600;
+	color: #4b2e0d;
+  }
+  
+  .datetimeIcon {
+	width: 20px;
+	height: 20px;
+  }
+  
+  .historyContainer {
+	width: 90%;
+	min-height: 650px;
+	padding: 50px 5%;
+	margin-top: 100px;
+	margin-bottom: 100px;
+	background: rgb(214, 187, 135);
+	overflow-y: auto;
+  }
+  
+  .historyPositionContainer {
+	width: 100%;
+	background: rgb(199, 143, 74);
+	padding: 20px;
+	margin-bottom: 15px;
+	border-radius: 20px;
+  }
+  
+  .historyPositionImg {
+	width: 70px;
+	height: 70px;
+	object-fit: cover;
+	border-radius: 20px;
+  }
+
+  .loginContainer {
+	width: 30%;
+	padding: 40px;
+	margin: 150px auto;
+	background: rgb(199, 143, 74);
+	border-radius: 40px;
+	text-align: center;
+	box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.15);
+  }
+  .loginPart,
+  .regPart {
+	width: 100%;
+	margin-bottom: 30px;
+  }
+  .loginHead {
+	font-size: 22px;
+	color: #fff3dc;
+	margin-bottom: 10px;
+  }
+  .loginField {
+	width: 80%;
+	height: 30px;
+	margin: 8px 0;
+	background: rgb(214, 187, 135);
+	border: none;
+	border-radius: 10px;
+	padding-left: 10px;
+	font-size: 14px;
+	color: rgb(82, 49, 10);
+  }
+  .loginButton {
+	width: 85%;
+	height: 40px;
+	background: rgb(214, 187, 135);
+	border: none;
+	border-radius: 10px;
+	font-size: 16px;
+	font-weight: bold;
+	color: rgb(82, 49, 10);
+	cursor: pointer;
+	margin-top: 10px;
+	box-shadow: 0px 6px 15px rgba(0, 0, 0, 0.1);
+	transition: transform 0.1s ease-in-out;
+  }
+  
+  .loginButton:hover {
+	transform: scale(1.03);
+  }
+  .cartContainer {
+	width: 80%;
+	margin: 150px auto;
+	background: rgb(199, 143, 74);
+	border-radius: 50px;
+	padding: 20px;
+  }
+  
+  .cartScroller {
+	max-height: 400px;
+	overflow-y: auto;
+	background: rgb(214, 187, 135);
+	border-radius: 10px;
+	padding: 20px;
+  }
+  
+  .positionContainer {
+	display: flex;
+	align-items: center;
+	margin-bottom: 15px;
+	background: rgb(199, 143, 74);
+	border-radius: 20px;
+	padding: 10px;
+  }
+  
+  .positionImg {
+	width: 100px;
+	height: 100px;
+	border-radius: 20px;
+	object-fit: cover;
+  }
+  
+  .positionName {
+	width: 30%;
+	margin-left: 15px;
+  }
+  
+  .positionPrice {
+	width: 20%;
+	text-align: right;
+  }
+  
+  .positionButtons {
+	display: flex;
+	align-items: center;
+	margin-left: auto;
+  }
+  
+  .positionButton {
+	width: 50px;
+	height: 50px;
+	background: rgb(214, 187, 135);
+	border: none;
+	margin: 0 5px;
+	border-radius: 15px;
+	font-size: 20px;
+  
+	/* Добавим выравнивание по центру: */
+	display: flex;
+	align-items: center;
+	justify-content: center;
+  }
+  
+  .buyContainer {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	margin-top: 20px;
+  }
+  
+  .buyButton {
+	width: 20%;
+	height: 50px;
+	background: rgb(214, 187, 135);
+	border: none;
+	border-radius: 25px;
+	font-size: 18px;
+  }
+  
+  .buyAddress {
+	width: 50%;
+	height: 50px;
+	background: rgb(214, 187, 135);
+	border: none;
+	border-radius: 25px;
+	padding-left: 15px;
+	font-size: 16px;
+  }
+  
+  .buyPrice {
+	width: 20%;
+	text-align: right;
+	font-size: 20px;
+  }
+
+  .removeButton {
+	width: 40px;
+	height: 40px;
+	background: rgb(255, 100, 100);
+	color: white;
+	border: none;
+	border-radius: 50%;
+	font-size: 20px;
+	margin-left: 10px;
+	cursor: pointer;
+	transition: transform 0.2s ease;
+  }
+  
+  .removeButton:hover {
+	transform: scale(1.1);
+  }
+  .emptyCartMessage {
+	text-align: center;
+	font-size: 28px;
+	font-weight: 500;
+	color: rgb(199, 143, 74);
+	background: rgb(214, 187, 135); /* тот же, что у .mainBody */
+
+	padding: 80px 0;
+	font-family: 'Quicksand', sans-serif;
+	opacity: 0.9;
+  }
+
+  .toast {
+	position: fixed;
+	bottom: 120px;
+	left: 50%;
+	transform: translateX(-50%);
+	background: rgb(199, 143, 74);
+	color: #fffdf7;
+	padding: 12px 24px;
+	border-radius: 20px;
+	font-size: 16px;
+	box-shadow: 0px 5px 15px rgba(0,0,0,0.2);
+	animation: fadeInOut 2.5s ease forwards;
+	z-index: 1000;
+  }
+  
+  @keyframes fadeInOut {
+	0% { opacity: 0; transform: translateX(-50%) translateY(20px); }
+	10%, 90% { opacity: 1; transform: translateX(-50%) translateY(0); }
+	100% { opacity: 0; transform: translateX(-50%) translateY(20px); }
+  }
+  .quantityControl {
+	display: flex;
+	align-items: center;
+	background: rgb(199, 143, 74);
+	padding: 5px;
+	border-radius: 20px;
+  }
+  
+  .qtyBtn {
+	width: 40px;
+	height: 40px;
+	background: rgb(214, 187, 135);
+	border: none;
+	border-radius: 10px;
+	font-size: 22px;
+	font-weight: bold;
+	color: rgb(82, 49, 10);
+	cursor: pointer;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	margin: 0 5px;
+  }
+  
+  .qtyDisplay {
+	width: 40px;
+	height: 40px;
+	background: rgb(214, 187, 135);
+	border-radius: 10px;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	font-size: 18px;
+	font-weight: bold;
+	color: rgb(82, 49, 10);
+  }
+	
