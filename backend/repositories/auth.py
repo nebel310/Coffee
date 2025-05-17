@@ -37,6 +37,7 @@ class UserRepository:
             user = UserOrm(
                 username=user_data.username,
                 email=user_data.email,
+                phone=user_data.phone,
                 hashed_password=hashed_password,
                 is_confirmed=user_data.is_confirmed
             )

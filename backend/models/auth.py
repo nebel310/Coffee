@@ -12,6 +12,7 @@ class UserOrm(Model):
     id: Mapped[int] = mapped_column(primary_key=True)
     username: Mapped[str]
     email: Mapped[str] = mapped_column(unique=True, nullable=False)
+    phone: Mapped[str] = mapped_column(nullable=True)
     hashed_password: Mapped[str]
     is_confirmed: Mapped[bool] = mapped_column(default=False)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
