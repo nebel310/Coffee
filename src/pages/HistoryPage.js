@@ -1,4 +1,3 @@
-// src/pages/HistoryPage.js
 import React, { useState, useEffect } from 'react';
 import '../App.css';
 import Header from '../components/header';
@@ -7,10 +6,16 @@ import { getUserOrders } from '../api';
 
 export default function HistoryPage({ token }) {
   const [orders, setOrders] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     if (token) {
-      getUserOrders(token).then(data => setOrders(data));
+      getUserOrders(token)
+        .then(data => {
+          setOrders(data);
+          setIsLoading(false);
+        })
+        .catch(() => setIsLoading(false));
     }
   }, [token]);
 
@@ -18,7 +23,21 @@ export default function HistoryPage({ token }) {
     return (
       <div className="mainBody">
         <Header />
-        <div className="emptyCartMessage">Для просмотра истории войдите в аккаунт</div>
+        <div className="empty-message-container">
+          <div className="empty-message">Для просмотра истории войдите в аккаунт</div>
+        </div>
+        <Footer />
+      </div>
+    );
+  }
+
+  if (isLoading) {
+    return (
+      <div className="mainBody">
+        <Header />
+        <div className="empty-message-container">
+          <div className="empty-message">Загрузка истории заказов...</div>
+        </div>
         <Footer />
       </div>
     );
@@ -28,7 +47,9 @@ export default function HistoryPage({ token }) {
     return (
       <div className="mainBody">
         <Header />
-        <div className="emptyCartMessage">Нет заказов</div>
+        <div className="empty-message-container">
+          <div className="empty-message">У вас пока нет заказов</div>
+        </div>
         <Footer />
       </div>
     );

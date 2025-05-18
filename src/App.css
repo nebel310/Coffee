@@ -454,3 +454,44 @@ html, body {
   align-items: center;
   gap: 5px;
 }
+
+/* Стили для центрированных сообщений */
+.empty-message-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: calc(100vh - 200px); /* Вычитаем высоту header и footer */
+  text-align: center;
+  padding: 20px;
+}
+
+.empty-message {
+  font-size: 24px;
+  color: #4b2e0d;
+  background: rgba(214, 187, 135, 0.8);
+  padding: 20px 40px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Стили для toast-сообщений */
+.toast-message {
+  position: fixed;
+  bottom: 120px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(199, 143, 74, 0.9);
+  color: white;
+  padding: 12px 24px;
+  border-radius: 20px;
+  z-index: 1000;
+  animation: fadeInOut 3s ease-in-out;
+}
+
+@keyframes fadeInOut {
+  0% { opacity: 0; bottom: 100px; }
+  10% { opacity: 1; bottom: 120px; }
+  90% { opacity: 1; bottom: 120px; }
+  100% { opacity: 0; bottom: 100px; }
+}

@@ -78,7 +78,9 @@ export default function CartPage({ token }) {
     return (
       <div className="mainBody">
         <Header />
-        <div className="emptyCartMessage">Для просмотра корзины войдите в аккаунт</div>
+        <div className="empty-message-container">
+          <div className="empty-message">Для просмотра корзины войдите в аккаунт</div>
+        </div>
         <Footer />
       </div>
     );
@@ -88,7 +90,9 @@ export default function CartPage({ token }) {
     return (
       <div className="mainBody">
         <Header />
-        <div className="emptyCartMessage">Загрузка корзины...</div>
+        <div className="empty-message-container">
+          <div className="empty-message">Загрузка корзины...</div>
+        </div>
         <Footer />
       </div>
     );
@@ -98,7 +102,9 @@ export default function CartPage({ token }) {
     return (
       <div className="mainBody">
         <Header />
-        <div className="emptyCartMessage">Корзина пуста 🧺</div>
+        <div className="empty-message-container">
+          <div className="empty-message">Корзина пуста 🧺</div>
+        </div>
         <Footer />
       </div>
     );

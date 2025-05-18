@@ -8,7 +8,7 @@ import Header from './components/header';
 import Footer from './components/footer';
 import { getProducts, addToCart, getCurrentUser, login, register, logout } from './api';
 
-function MainPage({ token, user, onLogout, onAddToCart }) {
+function MainPage({ token, user, onLogout }) {
   const [products, setProducts] = useState([]);
   const [toastMessage, setToastMessage] = useState('');
   const [isLoading, setIsLoading] = useState(true);
@@ -31,7 +31,7 @@ function MainPage({ token, user, onLogout, onAddToCart }) {
     try {
       await addToCart(product.id, 1, token);
       setToastMessage(`${product.title} добавлен в корзину`);
-      setTimeout(() => setToastMessage(''), 2500);
+      setTimeout(() => setToastMessage(''), 3000);
     } catch (error) {
       console.error('Ошибка добавления в корзину:', error);
     }
@@ -41,7 +41,9 @@ function MainPage({ token, user, onLogout, onAddToCart }) {
     return (
       <div className="mainBody">
         <Header />
-        <div className="emptyCartMessage">Загрузка...</div>
+        <div className="empty-message-container">
+          <div className="empty-message">Загрузка...</div>
+        </div>
         <Footer />
       </div>
     );
@@ -51,7 +53,9 @@ function MainPage({ token, user, onLogout, onAddToCart }) {
     return (
       <div className="mainBody">
         <Header />
-        <div className="emptyCartMessage">Нет доступных продуктов</div>
+        <div className="empty-message-container">
+          <div className="empty-message">Нет доступных продуктов</div>
+        </div>
         <Footer />
       </div>
     );
@@ -75,7 +79,7 @@ function MainPage({ token, user, onLogout, onAddToCart }) {
               <button className="shopPositionButtonAddition">Состав</button>
             </div>
             <div className="shopPositionButtons">
-              <button className="qtyBtn" onClick={() => onAddToCart(product)}>
+              <button className="qtyBtn" onClick={() => handleAddToCart(product)}>
                 +
               </button>
               <div className="shopPositionButtonBot">{product.price}р.</div>
@@ -84,7 +88,11 @@ function MainPage({ token, user, onLogout, onAddToCart }) {
         ))}
       </main>
       
-      {toastMessage && <div className="toast">{toastMessage}</div>}
+      {toastMessage && (
+        <div className="toast-message">
+          {toastMessage}
+        </div>
+      )}
       <Footer />
     </div>
   );
@@ -138,14 +146,6 @@ export default function App() {
     }
   };
 
-  const handleAddToCart = async (product) => {
-    try {
-      await addToCart(product.id, 1, token);
-    } catch (error) {
-      console.error('Ошибка добавления в корзину:', error);
-    }
-  };
-
   return (
     <Routes>
       <Route 
@@ -155,7 +155,6 @@ export default function App() {
             token={token} 
             user={user} 
             onLogout={handleLogout} 
-            onAddToCart={handleAddToCart} 
           />
         } 
       />
