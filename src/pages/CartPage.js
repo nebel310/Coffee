@@ -121,7 +121,7 @@ export default function CartPage({ token }) {
             <div key={item.id} className="positionContainer">
               <img 
                 className="positionImg" 
-                src={item.product.image_path} 
+                src={'/icons/default-product.png'}
                 alt={item.product.title} 
               />
               <div className="positionName">

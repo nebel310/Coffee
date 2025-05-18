@@ -48,13 +48,7 @@ export const getCurrentUser = (token) => request('/auth/me', 'GET', null, token)
 export const logout = (token) => request('/auth/logout', 'POST', null, token);
 
 // Products
-export const getProducts = async () => {
-  const products = await request('/products/');
-  return products.map(product => ({
-    ...product,
-    image_path: `${IMAGE_BASE_URL}${product.image_path}`
-  }));
-};
+export const getProducts = () => request('/products/');
 export const getProductById = (id) => request(`/products/${id}`);
 
 // Cart

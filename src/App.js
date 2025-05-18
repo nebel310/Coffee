@@ -17,12 +17,7 @@ function MainPage({ token, user, onLogout }) {
     const loadProducts = async () => {
       try {
         const data = await getProducts();
-        // Добавляем полные URL к изображениям
-        const productsWithImages = data.map(product => ({
-          ...product,
-          image_path: `http://localhost:5000${product.image_path}`
-        }));
-        setProducts(productsWithImages);
+        setProducts(data);
       } catch (error) {
         console.error('Ошибка загрузки продуктов:', error);
       } finally {
@@ -73,17 +68,11 @@ function MainPage({ token, user, onLogout }) {
       <main className="shopContainer">
         {products.map((product) => (
           <div key={product.id} className="shopPositionContainer">
-            <div className="productImageContainer">
-              <img 
-                className="productImage"
-                src={product.image_path} 
-                alt={product.title}
-                onError={(e) => {
-                  e.target.onerror = null;
-                  e.target.src = '/icons/default-product.png';
-                }}
-              />
-            </div>
+            <img 
+              className="shopPositionImg" 
+              src={'/icons/default-product.png'} 
+              alt={product.title} 
+            />
             <div className="shopPositionName">
               <h2>{product.title}</h2>
               <p>{product.description}</p>
@@ -99,7 +88,11 @@ function MainPage({ token, user, onLogout }) {
         ))}
       </main>
       
-      {toastMessage && <div className="toast-message">{toastMessage}</div>}
+      {toastMessage && (
+        <div className="toast-message">
+          {toastMessage}
+        </div>
+      )}
       <Footer />
     </div>
   );

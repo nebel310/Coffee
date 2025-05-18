@@ -44,7 +44,7 @@ class ProductRepository:
                 products = [
                     ProductOrm(
                         title=f"Товар {i}",
-                        description="Описание товара {i}",
+                        description=f"Описание товара {i}",
                         price=random.randint(100, 10000),
                         address=f"Кофейня МИСИС {i}",
                         image_path=f"/images/product_{i}.jpg"

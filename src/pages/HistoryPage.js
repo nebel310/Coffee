@@ -65,7 +65,7 @@ export default function HistoryPage({ token }) {
             <div style={{ display: 'flex', alignItems: 'center' }}>
               {order.items.map((item, index) => (
                 <div key={index} style={{ position: 'relative', marginRight: '10px' }}>
-                  <img src={item.product.image_path} alt={item.product.title} className="historyPositionImg" />
+                  <img src={'/icons/default-product.png'}  alt={item.product.title} className="historyPositionImg" />
                   <span className="historyItemQuantity">x{item.quantity}</span>
                 </div>
               ))}
