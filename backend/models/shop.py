@@ -1,6 +1,6 @@
 from datetime import datetime, timezone
 from sqlalchemy import ForeignKey, DateTime
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 from database import Model
 
 
@@ -37,6 +37,9 @@ class OrderOrm(Model):
     status: Mapped[str]
     address: Mapped[str]
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
+    
+    # Добавляем relationship для items
+    items: Mapped[list["Order_itemOrm"]] = relationship(back_populates="order", lazy="selectin")
 
 
 class Order_itemOrm(Model):
@@ -47,3 +50,7 @@ class Order_itemOrm(Model):
     product_id: Mapped[int] = mapped_column(ForeignKey('products.id'))
     quantity: Mapped[int]
     price: Mapped[int]
+    
+    # Добавляем relationships
+    order: Mapped["OrderOrm"] = relationship(back_populates="items")
+    product: Mapped["ProductOrm"] = relationship(lazy="joined")

@@ -1,105 +1,171 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Header from '../components/header';
 import Footer from '../components/footer';
 import '../App.css';
+import { getCart, updateCartItem, removeFromCart, checkoutCart } from '../api';
 
-export default function CartPage() {
-  const [cart, setCart] = useState([
-    {
-      id: 1,
-      name: 'Кофе Латте',
-      image: '/menu/1.png',
-      price: 250,
-      unit: 250,
-      quantity: 1,
-    },
-    {
-      id: 2,
-      name: 'Картошка фри',
-      image: '/menu/3.png',
-      price: 100,
-      unit: 50,
-      quantity: 2,
-    },
-  ]);
-
+export default function CartPage({ token }) {
+  const [cart, setCart] = useState(null);
   const [address, setAddress] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(null);
 
-  const increaseQty = (id) => {
-    setCart((prev) =>
-      prev.map((item) =>
-        item.id === id
-          ? { ...item, quantity: item.quantity + 1, price: item.unit * (item.quantity + 1) }
-          : item
-      )
+  const fetchCart = async () => {
+    try {
+      setIsLoading(true);
+      const cartData = await getCart(token);
+      setCart(cartData);
+      setError(null);
+    } catch (err) {
+      console.error('Ошибка загрузки корзины:', err);
+      setError('Не удалось загрузить корзину');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (token) fetchCart();
+  }, [token]);
+
+  const handleQuantityChange = async (cartId, newQuantity) => {
+    try {
+      setIsLoading(true);
+      await updateCartItem(cartId, newQuantity, token);
+      await fetchCart();
+    } catch (err) {
+      console.error('Ошибка изменения количества:', err);
+      setError('Не удалось изменить количество');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleRemoveItem = async (cartId) => {
+    try {
+      setIsLoading(true);
+      await removeFromCart(cartId, token);
+      await fetchCart();
+    } catch (err) {
+      console.error('Ошибка удаления товара:', err);
+      setError('Не удалось удалить товар');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleCheckout = async () => {
+    if (!address.trim()) {
+      setError('Введите адрес доставки');
+      return;
+    }
+
+    try {
+      setIsLoading(true);
+      await checkoutCart(address, token);
+      alert('Заказ успешно оформлен!');
+      setCart(null);
+      setAddress('');
+    } catch (err) {
+      console.error('Ошибка оформления заказа:', err);
+      setError(err.message || 'Ошибка оформления заказа');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  if (!token) {
+    return (
+      <div className="mainBody">
+        <Header />
+        <div className="emptyCartMessage">Для просмотра корзины войдите в аккаунт</div>
+        <Footer />
+      </div>
     );
-  };
+  }
 
-  const decreaseQty = (id) => {
-    setCart((prev) =>
-      prev.map((item) =>
-        item.id === id && item.quantity > 1
-          ? { ...item, quantity: item.quantity - 1, price: item.unit * (item.quantity - 1) }
-          : item
-      )
+  if (isLoading && !cart) {
+    return (
+      <div className="mainBody">
+        <Header />
+        <div className="emptyCartMessage">Загрузка корзины...</div>
+        <Footer />
+      </div>
     );
-  };
+  }
 
-  const removeItem = (id) => {
-    setCart((prev) => prev.filter((item) => item.id !== id));
-  };
-
-  const totalPrice = cart.reduce((sum, item) => sum + item.price, 0);
-
-  const handleOrder = () => {
-    if (!address.trim()) return alert('Введите адрес доставки!');
-    alert(`Заказ оформлен на сумму ${totalPrice}р.\nАдрес: ${address}`);
-    // здесь можно отправить данные на сервер
-  };
+  if (!cart || cart.items.length === 0) {
+    return (
+      <div className="mainBody">
+        <Header />
+        <div className="emptyCartMessage">Корзина пуста 🧺</div>
+        <Footer />
+      </div>
+    );
+  }
 
   return (
     <div className="mainBody">
       <Header />
-
       <main className="cartContainer">
+        {error && <div className="error-message">{error}</div>}
+        
         <div className="cartScroller">
-          {cart.length === 0 ? (
-           <div className="emptyCartMessage">Корзина пуста 🧺</div>
-
-          ) : (
-            cart.map((item) => (
-              <div key={item.id} className="positionContainer">
-                <img className="positionImg" src={item.image} alt={item.name} />
-                <div className="positionName">
-                  <strong>{item.name}</strong>
-                </div>
-                <div className="positionPrice">
-                  <div>{item.price}р.</div>
-                  <small>{item.unit} за шт.</small>
-                </div>
-                <div className="quantityControl">
-                    <button className="qtyBtn" onClick={() => decreaseQty(item.id)}>−</button>
-                    <div className="qtyDisplay">{item.quantity}</div>
-                    <button className="qtyBtn" onClick={() => increaseQty(item.id)}>+</button>
-                    </div>
-                <button className="removeButton" onClick={() => removeItem(item.id)}>❌</button>
+          {cart.items.map(item => (
+            <div key={item.id} className="positionContainer">
+              <img 
+                className="positionImg" 
+                src={item.product.image_path} 
+                alt={item.product.title} 
+              />
+              <div className="positionName">
+                <strong>{item.product.title}</strong>
               </div>
-            ))
-          )}
+              <div className="positionPrice">
+                <div>{item.product.price * item.quantity}р.</div>
+                <small>{item.product.price} за шт.</small>
+              </div>
+              <div className="quantityControl">
+                <button 
+                  onClick={() => handleQuantityChange(item.id, item.quantity - 1)}
+                  disabled={isLoading || item.quantity <= 1}
+                >
+                  −
+                </button>
+                <div className="qtyDisplay">{item.quantity}</div>
+                <button 
+                  onClick={() => handleQuantityChange(item.id, item.quantity + 1)}
+                  disabled={isLoading}
+                >
+                  +
+                </button>
+              </div>
+              <button 
+                onClick={() => handleRemoveItem(item.id)}
+                disabled={isLoading}
+              >
+                ❌
+              </button>
+            </div>
+          ))}
         </div>
 
         <div className="buyContainer">
-          <button className="buyButton" onClick={handleOrder}>Заказать</button>
           <input
-            className="buyAddress"
-            placeholder="Адрес доставки"
             value={address}
             onChange={(e) => setAddress(e.target.value)}
+            placeholder="Адрес доставки"
+            disabled={isLoading}
           />
-          <div className="buyPrice">{totalPrice}р.</div>
+          <div className="totalPrice">Итого: {cart.total_price}р.</div>
+          <button 
+            onClick={handleCheckout}
+            disabled={isLoading}
+          >
+            {isLoading ? 'Оформление...' : 'Оформить заказ'}
+          </button>
         </div>
       </main>
-
       <Footer />
     </div>
   );

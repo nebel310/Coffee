@@ -39,7 +39,7 @@ class UserRepository:
                 email=user_data.email,
                 phone=user_data.phone,
                 hashed_password=hashed_password,
-                is_confirmed=user_data.is_confirmed
+                is_confirmed=True
             )
             session.add(user)
             await session.flush()

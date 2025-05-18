@@ -133,17 +133,33 @@ class CartRepository:
 
     @classmethod
     async def checkout_cart(cls, user_id: int, address: str):
-        try:
-            async with new_session() as session:
-                cart_items = await cls.get_user_cart(user_id)
+        async with new_session() as session:
+            try:
+                # Получаем товары в корзине
+                cart_query = select(CartOrm).where(CartOrm.user_id == user_id)
+                cart_result = await session.execute(cart_query)
+                cart_items = cart_result.scalars().all()
+                
                 if not cart_items:
                     raise ValueError("Корзина пуста")
                 
+                # Рассчитываем общую сумму и готовим товары заказа
                 total_price = 0
+                order_items = []
+                
                 for item in cart_items:
                     product = await ProductRepository.get_product_by_id(item.product_id)
+                    if not product:
+                        continue
+                        
                     total_price += product.price * item.quantity
+                    order_items.append({
+                        'product_id': product.id,
+                        'quantity': item.quantity,
+                        'price': product.price
+                    })
                 
+                # Создаем заказ
                 order = OrderOrm(
                     user_id=user_id,
                     total_price=total_price,
@@ -153,21 +169,27 @@ class CartRepository:
                 session.add(order)
                 await session.flush()
                 
-                for item in cart_items:
-                    product = await ProductRepository.get_product_by_id(item.product_id)
+                # Добавляем товары заказа
+                for item in order_items:
                     order_item = Order_itemOrm(
                         order_id=order.id,
-                        product_id=item.product_id,
-                        quantity=item.quantity,
-                        price=product.price
+                        product_id=item['product_id'],
+                        quantity=item['quantity'],
+                        price=item['price']
                     )
                     session.add(order_item)
                 
+                # Очищаем корзину
                 await session.execute(delete(CartOrm).where(CartOrm.user_id == user_id))
                 await session.commit()
+                
                 return order
-        except Exception as e:
-            raise ValueError(f"Ошибка при оформлении заказа: {str(e)}")
+                
+            except Exception as e:
+                await session.rollback()
+                raise ValueError(f"Ошибка при оформлении заказа: {str(e)}")
+
+
 
 class OrderRepository:
     @classmethod
@@ -180,9 +202,10 @@ class OrderRepository:
                     .limit(limit)
                     .offset(offset)
                     .order_by(OrderOrm.created_at.desc())
+                    .options(joinedload(OrderOrm.items))  # Жадная загрузка items
                 )
                 result = await session.execute(query)
-                return result.scalars().all()
+                return result.scalars().unique().all()
         except Exception:
             raise ValueError("Ошибка при получении заказов")
 

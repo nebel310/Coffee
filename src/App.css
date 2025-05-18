@@ -1,3 +1,8 @@
+* {
+	font-family: sans-serif;
+
+}
+
 html, body {
 	margin: 0;
 	padding: 0;
@@ -420,3 +425,32 @@ html, body {
 	color: rgb(82, 49, 10);
   }
 	
+.error-message {
+  color: #ff4444;
+  font-size: 12px;
+  margin-top: 5px;
+}
+
+.loginField.error {
+  border: 1px solid #ff4444;
+}
+
+
+.error-message {
+  color: #ff4444;
+  background: #ffeeee;
+  padding: 10px;
+  border-radius: 5px;
+  margin: 10px 0;
+  text-align: center;
+}
+
+.positionContainer {
+  position: relative;
+}
+
+.quantityControl {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}

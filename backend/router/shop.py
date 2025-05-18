@@ -40,10 +40,19 @@ async def get_user_cart(user: UserOrm = Depends(get_current_user)):
     try:
         cart_items = await CartRepository.get_user_cart(user.id)
         total_price = 0
+        items_with_products = []
+        
         for item in cart_items:
             product = await ProductRepository.get_product_by_id(item.product_id)
             total_price += product.price * item.quantity
-        return {"items": cart_items, "total_price": total_price}
+            items_with_products.append({
+                "id": item.id,
+                "product_id": item.product_id,
+                "product": product,  # Добавляем полную информацию о товаре
+                "quantity": item.quantity
+            })
+            
+        return {"items": items_with_products, "total_price": total_price}
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
 
@@ -80,10 +89,42 @@ async def delete_cart(cart_id: int, user: UserOrm = Depends(get_current_user)):
         raise HTTPException(status_code=400, detail=str(e))
 
 @order_router.get("/", response_model=list[SOrder])
-async def get_user_orders(limit: int = 10, offset: int = 0, user: UserOrm = Depends(get_current_user)):
+async def get_user_orders(
+    limit: int = 10, 
+    offset: int = 0, 
+    user: UserOrm = Depends(get_current_user)
+):
     try:
         orders = await OrderRepository.get_user_orders(user.id, limit, offset)
-        return orders
+        
+        # Преобразуем ORM-объекты в словари с нужной структурой
+        result = []
+        for order in orders:
+            order_dict = {
+                "id": order.id,
+                "user_id": order.user_id,
+                "total_price": order.total_price,
+                "status": order.status,
+                "address": order.address,
+                "created_at": order.created_at,
+                "items": []
+            }
+            
+            # Добавляем items с информацией о продуктах
+            for item in order.items:
+                product = await ProductRepository.get_product_by_id(item.product_id)
+                order_dict["items"].append({
+                    "id": item.id,
+                    "order_id": item.order_id,
+                    "product_id": item.product_id,
+                    "quantity": item.quantity,
+                    "price": item.price,
+                    "product": product
+                })
+                
+            result.append(order_dict)
+            
+        return result
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
 

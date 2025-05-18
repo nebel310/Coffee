@@ -1,113 +1,177 @@
 import React, { useState, useEffect } from 'react';
-
 import { Routes, Route, useNavigate } from 'react-router-dom';
 import './App.css';
 import HistoryPage from './pages/HistoryPage';
 import ProfilePage from './pages/ProfilePage';
 import CartPage from './pages/CartPage';
-
-
 import Header from './components/header';
 import Footer from './components/footer';
+import { getProducts, addToCart, getCurrentUser, login, register, logout } from './api';
 
-function MainPage() {
-  const navigate = useNavigate();
-  const [cart, setCart] = useState([]);
+function MainPage({ token, user, onLogout, onAddToCart }) {
+  const [products, setProducts] = useState([]);
   const [toastMessage, setToastMessage] = useState('');
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const saved = localStorage.getItem('cart');
-    if (saved) setCart(JSON.parse(saved));
+    const loadProducts = async () => {
+      try {
+        const data = await getProducts();
+        setProducts(data);
+      } catch (error) {
+        console.error('Ошибка загрузки продуктов:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    loadProducts();
   }, []);
 
-  useEffect(() => {
-    localStorage.setItem('cart', JSON.stringify(cart));
-  }, [cart]);
-
-  const handleAddToCart = (product) => {
-    const exists = cart.find((item) => item.id === product.id);
-    if (exists) {
-      setCart((prev) =>
-        prev.map((item) =>
-          item.id === product.id
-            ? {
-                ...item,
-                quantity: item.quantity + 1,
-                price: item.unit * (item.quantity + 1),
-              }
-            : item
-        )
-      );
-    } else {
-      setCart([
-        ...cart,
-        {
-          ...product,
-          quantity: 1,
-          price: product.unit,
-        },
-      ]);
+  const handleAddToCart = async (product) => {
+    try {
+      await addToCart(product.id, 1, token);
+      setToastMessage(`${product.title} добавлен в корзину`);
+      setTimeout(() => setToastMessage(''), 2500);
+    } catch (error) {
+      console.error('Ошибка добавления в корзину:', error);
     }
-  
-    // Показываем сообщение
-    setToastMessage(`${product.name} добавлен в корзину`);
-    setTimeout(() => setToastMessage(''), 2500);
   };
 
-  const menu = [
-    {
-      id: 1,
-      name: 'Кофе Латте',
-      description: 'Кофейный напиток, который состоит из эспрессо, горячего молока и молочной пены.',
-      image: '/menu/1.png',
-      unit: 250,
-    },
-    {
-      id: 2,
-      name: 'Пирожное Картошка',
-      description: 'Шоколадное пирожное с печеньем внутри в виде маленькой картошки.',
-      image: '/menu/2.png',
-      unit: 100,
-    },
-  ];
+  if (isLoading) {
+    return (
+      <div className="mainBody">
+        <Header />
+        <div className="emptyCartMessage">Загрузка...</div>
+        <Footer />
+      </div>
+    );
+  }
+
+  if (products.length === 0) {
+    return (
+      <div className="mainBody">
+        <Header />
+        <div className="emptyCartMessage">Нет доступных продуктов</div>
+        <Footer />
+      </div>
+    );
+  }
 
   return (
     <div className="mainBody">
       <Header />
-
+      
       <main className="shopContainer">
-        {menu.map((item) => (
-          <div key={item.id} className="shopPositionContainer">
-            <img className="shopPositionImg" src={item.image} alt={item.name} />
+        {products.map((product) => (
+          <div key={product.id} className="shopPositionContainer">
+            <img 
+              className="shopPositionImg" 
+              src={product.image_path || '/icons/default-product.png'} 
+              alt={product.title} 
+            />
             <div className="shopPositionName">
-              <h2>{item.name}</h2>
-              <p>{item.description}</p>
+              <h2>{product.title}</h2>
+              <p>{product.description}</p>
               <button className="shopPositionButtonAddition">Состав</button>
             </div>
             <div className="shopPositionButtons">
-              <button className="qtyBtn" onClick={() => handleAddToCart(item)}>
+              <button className="qtyBtn" onClick={() => onAddToCart(product)}>
                 +
               </button>
-              <div className="shopPositionButtonBot">{item.unit}р.</div>
+              <div className="shopPositionButtonBot">{product.price}р.</div>
             </div>
           </div>
         ))}
       </main>
+      
       {toastMessage && <div className="toast">{toastMessage}</div>}
-
       <Footer />
     </div>
   );
 }
 
 export default function App() {
+  const [token, setToken] = useState(localStorage.getItem('token') || null);
+  const [user, setUser] = useState(null);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (token) {
+      getCurrentUser(token)
+        .then(user => setUser(user))
+        .catch(() => {
+          localStorage.removeItem('token');
+          setToken(null);
+        });
+    }
+  }, [token]);
+
+  const handleLogin = async (loginData) => {
+    try {
+      const response = await login(loginData);
+      setToken(response.access_token);
+      localStorage.setItem('token', response.access_token);
+      navigate('/');
+    } catch (error) {
+      alert('Ошибка входа: ' + error.message);
+    }
+  };
+
+  const handleRegister = async (registerData) => {
+    try {
+      await register(registerData);
+      alert('Регистрация успешна! Можете войти.');
+      navigate('/profile');
+    } catch (error) {
+      alert('Ошибка регистрации: ' + error.message);
+    }
+  };
+
+  const handleLogout = async () => {
+    try {
+      await logout(token);
+    } finally {
+      setToken(null);
+      setUser(null);
+      localStorage.removeItem('token');
+      navigate('/');
+    }
+  };
+
+  const handleAddToCart = async (product) => {
+    try {
+      await addToCart(product.id, 1, token);
+    } catch (error) {
+      console.error('Ошибка добавления в корзину:', error);
+    }
+  };
+
   return (
     <Routes>
-      <Route path="/" element={<MainPage />} />
-      <Route path="/history" element={<HistoryPage />} />
-      <Route path="/profile" element={<ProfilePage />} />
-      <Route path="/cart" element={<CartPage />} />
-
+      <Route 
+        path="/" 
+        element={
+          <MainPage 
+            token={token} 
+            user={user} 
+            onLogout={handleLogout} 
+            onAddToCart={handleAddToCart} 
+          />
+        } 
+      />
+      <Route path="/history" element={<HistoryPage token={token} />} />
+      <Route 
+        path="/profile" 
+        element={
+          <ProfilePage 
+            onLogin={handleLogin} 
+            onRegister={handleRegister} 
+            user={user} 
+            onLogout={handleLogout} 
+          />
+        } 
+      />
+      <Route path="/cart" element={<CartPage token={token} />} />
     </Routes>
   );
 }

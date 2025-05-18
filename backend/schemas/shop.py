@@ -14,7 +14,9 @@ class SProduct(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
 class SCartItem(BaseModel):
+    id: int
     product_id: int
+    product: SProduct  # Добавляем информацию о товаре
     quantity: int
 
 class SCart(BaseModel):
@@ -22,9 +24,14 @@ class SCart(BaseModel):
     total_price: int
 
 class SOrderItem(BaseModel):
+    id: int
+    order_id: int
     product_id: int
     quantity: int
     price: int
+    product: Optional[SProduct] = None  # Добавляем опциональное поле продукта
+
+    model_config = ConfigDict(from_attributes=True)
 
 class SOrder(BaseModel):
     id: int
@@ -33,4 +40,6 @@ class SOrder(BaseModel):
     status: str
     address: str
     created_at: datetime
-    items: list[SOrderItem]
+    items: list[SOrderItem]  # Это поле обязательно
+
+    model_config = ConfigDict(from_attributes=True)

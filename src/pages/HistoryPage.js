@@ -1,31 +1,38 @@
-import React from 'react';
+// src/pages/HistoryPage.js
+import React, { useState, useEffect } from 'react';
 import '../App.css';
 import Header from '../components/header';
 import Footer from '../components/footer';
+import { getUserOrders } from '../api';
 
-export default function HistoryPage() {
-  const orders = [
-    {
-      id: 1,
-      items: [
-        { name: 'Латте', image: '/menu/1.png', quantity: 1 },
-        { name: 'Чай', image: '/menu/3.png', quantity: 2 },
-      ],
-      total: 350,
-      address: 'aASDaSdsadsad',
-      datetime: '2025-04-08 14:49:33',
-    },
-    {
-      id: 2,
-      items: [
-        { name: 'Латте', image: '/menu/1.png', quantity: 1 },
-        { name: 'Картошка', image: '/menu/2.png', quantity: 1 },
-      ],
-      total: 350,
-      address: '',
-      datetime: '2025-02-03 19:37:16',
-    },
-  ];
+export default function HistoryPage({ token }) {
+  const [orders, setOrders] = useState([]);
+
+  useEffect(() => {
+    if (token) {
+      getUserOrders(token).then(data => setOrders(data));
+    }
+  }, [token]);
+
+  if (!token) {
+    return (
+      <div className="mainBody">
+        <Header />
+        <div className="emptyCartMessage">Для просмотра истории войдите в аккаунт</div>
+        <Footer />
+      </div>
+    );
+  }
+
+  if (orders.length === 0) {
+    return (
+      <div className="mainBody">
+        <Header />
+        <div className="emptyCartMessage">Нет заказов</div>
+        <Footer />
+      </div>
+    );
+  }
 
   return (
     <div className="mainBody">
@@ -37,29 +44,16 @@ export default function HistoryPage() {
             <div style={{ display: 'flex', alignItems: 'center' }}>
               {order.items.map((item, index) => (
                 <div key={index} style={{ position: 'relative', marginRight: '10px' }}>
-                  <img src={item.image} alt={item.name} className="historyPositionImg" />
-                  <span
-                    style={{
-                      position: 'absolute',
-                      top: '0',
-                      right: '0',
-                      fontSize: '14px',
-                      backgroundColor: 'rgb(214, 187, 135)',
-                      borderRadius: '50%',
-                      padding: '2px 6px',
-                    }}
-                  >
-                    x{item.quantity}
-                  </span>
+                  <img src={item.product.image_path} alt={item.product.title} className="historyPositionImg" />
+                  <span className="historyItemQuantity">x{item.quantity}</span>
                 </div>
               ))}
-              <div style={{ fontSize: '22px', fontWeight: 'bold' }}>
-                = {order.total}р.
-              </div>
+              <div className="historyTotalPrice">= {order.total_price}р.</div>
             </div>
-            <div style={{ marginTop: '10px' }}>
+            <div className="historyOrderDetails">
               <div>Адрес: {order.address || '—'}</div>
-              <div>От: {order.datetime}</div>
+              <div>Статус: {order.status}</div>
+              <div>Дата: {new Date(order.created_at).toLocaleString()}</div>
             </div>
           </div>
         ))}

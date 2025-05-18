@@ -7,7 +7,8 @@ from database import create_tables, delete_tables
 from router.auth import router as auth_router
 from router.shop import product_router, cart_router, order_router
 from repositories.shop import ProductRepository
-import asyncio
+
+
 
 
 async def init_data():
@@ -87,7 +88,7 @@ app.include_router(order_router)
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://127.0.0.1:5500"],  # Тут адрес фронтенда
+    allow_origins=["http://localhost:3000", "http://127.0.0.1:3000"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -95,9 +96,11 @@ app.add_middleware(
 
 
 
-#Раскоментить, когда будешь писать докер. - хуйня
-# if __name__ == "__main__":
-#     uvicorn.run(
-#         "main:app",
-#         reload=True,
-#     )
+
+if __name__ == "__main__":
+    uvicorn.run(
+        "main:app",
+        host="127.0.0.1",
+        port=5000,
+        reload=True,
+    )
