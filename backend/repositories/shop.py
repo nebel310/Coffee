@@ -43,12 +43,12 @@ class ProductRepository:
             if count == 0:
                 products = [
                     ProductOrm(
-                        title=types_of_products[i-1],
-                        description=desc_of_products[i-1],
+                        title=f"Товар {i}",
+                        description="Описание товара {i}",
                         price=random.randint(100, 10000),
                         address=f"Кофейня МИСИС {i}",
                         image_path=f"/images/product_{i}.jpg"
-                    ) for i in range(1, 10)
+                    ) for i in range(1, 11)
                 ]
                 session.add_all(products)
                 await session.commit()

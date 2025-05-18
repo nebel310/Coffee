@@ -9,7 +9,8 @@ from sqlalchemy.orm import DeclarativeBase
 load_dotenv()
 
 engine = create_async_engine(
-    os.getenv('DATABASE_URL')
+    "sqlite+aiosqlite:///coffee.db",  # Файл будет создан в текущей директории
+    connect_args={"check_same_thread": False}  # Требуется для SQLite
 )
 
 new_session = async_sessionmaker(engine, expire_on_commit=False)
