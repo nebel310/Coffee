@@ -495,3 +495,86 @@ html, body {
   90% { opacity: 1; bottom: 120px; }
   100% { opacity: 0; bottom: 100px; }
 }
+
+
+/* Стили для контейнера продуктов */
+.shopPositionContainer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 20px;
+  margin-bottom: 15px;
+  background: rgb(199, 143, 74);
+  border-radius: 50px;
+  min-height: 200px;
+}
+
+.productImageContainer {
+  width: 150px;
+  height: 150px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  border-radius: 20px;
+  background: #fff;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.productImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.shopPositionName {
+  flex: 1;
+  padding: 10px;
+  min-width: 0;
+}
+
+.shopPositionName h2 {
+  margin: 0 0 10px 0;
+  color: #fff;
+  font-size: 18px;
+}
+
+.shopPositionName p {
+  margin: 0;
+  color: #f5f5f5;
+  font-size: 14px;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.shopPositionButtons {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  gap: 15px;
+  flex-shrink: 0;
+}
+
+/* Адаптивные стили */
+@media (max-width: 768px) {
+  .shopPositionContainer {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .productImageContainer {
+    width: 100%;
+    height: 200px;
+  }
+  
+  .shopPositionButtons {
+    flex-direction: row;
+    width: 100%;
+    justify-content: center;
+  }
+}

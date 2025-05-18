@@ -7,6 +7,7 @@ from database import create_tables, delete_tables
 from router.auth import router as auth_router
 from router.shop import product_router, cart_router, order_router
 from repositories.shop import ProductRepository
+from fastapi.staticfiles import StaticFiles
 
 
 
@@ -84,6 +85,8 @@ app.include_router(auth_router)
 app.include_router(product_router)
 app.include_router(cart_router)
 app.include_router(order_router)
+
+app.mount("/backend/images", StaticFiles(directory="backend/images"), name="images")
 
 
 app.add_middleware(
