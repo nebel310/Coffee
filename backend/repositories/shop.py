@@ -5,6 +5,9 @@ from models.shop import ProductOrm, CartOrm, OrderOrm, Order_itemOrm
 from sqlalchemy.orm import joinedload
 import random
 
+
+
+
 class ProductRepository:
     @classmethod
     async def init_products(cls):
@@ -38,7 +41,7 @@ class ProductRepository:
                 "Слоеная булочка с хрустящей корочкой",  
                 "Итальянский десерт из кофе, маскарпоне и савоярди",  
                 "Нежный десерт из творожного сыра на песочной основе" 
-            ]  
+            ]
             
             if count == 0:
                 products = [
