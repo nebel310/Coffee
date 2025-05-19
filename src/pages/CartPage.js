@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import Header from '../components/header';
 import Footer from '../components/footer';
 import '../App.css';
@@ -10,7 +10,7 @@ export default function CartPage({ token }) {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  const fetchCart = async () => {
+  const fetchCart = useCallback(async () => {
     try {
       setIsLoading(true);
       const cartData = await getCart(token);
@@ -22,11 +22,11 @@ export default function CartPage({ token }) {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [token]);
 
   useEffect(() => {
     if (token) fetchCart();
-  }, [token]);
+  }, [token, fetchCart]);
 
   const handleQuantityChange = async (cartId, newQuantity) => {
     try {
@@ -121,8 +121,11 @@ export default function CartPage({ token }) {
             <div key={item.id} className="positionContainer">
               <img 
                 className="positionImg" 
-                src={'/icons/default-product.png'}
-                alt={item.product.title} 
+                src={item.product.image_path}
+                alt={item.product.title}
+                onError={(e) => {
+                  e.target.src = '/icons/default-product.png';
+                }}
               />
               <div className="positionName">
                 <strong>{item.product.title}</strong>

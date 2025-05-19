@@ -13,16 +13,13 @@ async function request(url, method = 'GET', data = null, token = null) {
     options.headers.Authorization = `Bearer ${token}`;
   }
 
-  // Для GET запросов добавляем параметры в URL
   if (method === 'GET' && data) {
     const params = new URLSearchParams();
     for (const key in data) {
       params.append(key, data[key]);
     }
     url += `?${params.toString()}`;
-  }
-  // Для других методов добавляем тело запроса
-  else if (data) {
+  } else if (data) {
     options.body = JSON.stringify(data);
   }
 
@@ -48,14 +45,22 @@ export const getCurrentUser = (token) => request('/auth/me', 'GET', null, token)
 export const logout = (token) => request('/auth/logout', 'POST', null, token);
 
 // Products
-export const getProducts = () => request('/products/');
-export const getProductById = (id) => request(`/products/${id}`);
+export const getProducts = () => request('/products/').then(products =>
+  products.map(p => ({
+    ...p,
+    image_path: p.image_path ? `${IMAGE_BASE_URL}/products/product/image/${p.id}` : '/icons/default-product.png'
+  }))
+);
+
+export const getProductById = (id) => request(`/products/${id}`).then(product => ({
+  ...product,
+  image_path: product.image_path ? `${IMAGE_BASE_URL}/products/product/image/${product.id}` : '/icons/default-product.png'
+}));
 
 // Cart
 export const getCart = async (token) => {
   const cartData = await request('/cart/', 'GET', null, token);
   
-  // Преобразуем структуру данных для фронтенда
   return {
     items: cartData.items.map(item => ({
       id: item.id,
@@ -64,14 +69,15 @@ export const getCart = async (token) => {
         id: item.product_id,
         title: item.product?.title || 'Неизвестный товар',
         price: item.product?.price || 0,
-        image_path: item.product?.image_path || '/icons/default-product.png'
+        image_path: item.product?.image_path ? 
+          `${IMAGE_BASE_URL}/products/product/image/${item.product_id}` : 
+          '/icons/default-product.png'
       }
     })),
     total_price: cartData.total_price
   };
 };
 
-// Исправленные методы для работы с корзиной:
 export const addToCart = (productId, quantity, token) => {
   const params = new URLSearchParams();
   params.append('product_id', productId);
@@ -96,5 +102,19 @@ export const checkoutCart = (address, token) => {
 };
 
 // Orders
-export const getUserOrders = (token) => request('/orders/', 'GET', null, token);
+export const getUserOrders = (token) => 
+  request('/orders/', 'GET', null, token).then(orders => 
+    orders.map(order => ({
+      ...order,
+      items: order.items.map(item => ({
+        ...item,
+        product: {
+          ...item.product,
+          image_path: item.product?.image_path ? 
+            `${IMAGE_BASE_URL}/orders/order/image/${item.product.id}` : 
+            '/icons/default-product.png'
+        }
+      }))
+    })))
+
 export const getOrderDetails = (orderId, token) => request(`/orders/${orderId}`, 'GET', null, token);

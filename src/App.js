@@ -70,8 +70,11 @@ function MainPage({ token, user, onLogout }) {
           <div key={product.id} className="shopPositionContainer">
             <img 
               className="shopPositionImg" 
-              src={'/icons/default-product.png'} 
+              src={product.image_path}
               alt={product.title} 
+              onError={(e) => {
+                e.target.src = '/icons/default-product.png';
+              }}
             />
             <div className="shopPositionName">
               <h2>{product.title}</h2>

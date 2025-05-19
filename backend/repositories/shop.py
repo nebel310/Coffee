@@ -12,7 +12,6 @@ class ProductRepository:
     @classmethod
     async def init_products(cls):
         async with new_session() as session:
-            # Проверяем, есть ли уже товары
             query = select(func.count()).select_from(ProductOrm)
             result = await session.execute(query)
             count = result.scalar()
@@ -24,7 +23,7 @@ class ProductRepository:
                 'Американо', 
                 'Флэт Уайт', 
                 'Раф кофе', 
-                'Матча латте'
+                'Матча латте',
                 'Круассан', 
                 'Тирамису', 
                 'Чизкейк'
@@ -46,12 +45,12 @@ class ProductRepository:
             if count == 0:
                 products = [
                     ProductOrm(
-                        title=f"Товар {i}",
-                        description=f"Описание товара {i}",
+                        title=types_of_products[i],
+                        description=desc_of_products[i],
                         price=random.randint(100, 10000),
-                        address=f"Кофейня МИСИС {i}",
-                        image_path=f"/images/product_{i}.jpg"
-                    ) for i in range(1, 11)
+                        address=f"Кофейня МИСИС {i+1}",
+                        image_path=f"/product/image/{i+1}"
+                    ) for i in range(len(types_of_products))
                 ]
                 session.add_all(products)
                 await session.commit()
@@ -62,7 +61,8 @@ class ProductRepository:
             async with new_session() as session:
                 query = select(ProductOrm).limit(limit).offset(offset)
                 result = await session.execute(query)
-                return result.scalars().all()
+                products = result.scalars().all()
+                return products
         except Exception:
             raise ValueError("Ошибка при получении списка товаров")
 

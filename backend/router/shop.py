@@ -1,8 +1,13 @@
+import os
 from fastapi import APIRouter, Depends, HTTPException
+from fastapi.responses import FileResponse
 from utils.security import get_current_user
 from repositories.shop import ProductRepository, CartRepository, OrderRepository
 from schemas.shop import SProduct, SCart, SOrder
 from models.auth import UserOrm
+
+
+
 
 product_router = APIRouter(
     prefix="/products",
@@ -55,6 +60,15 @@ async def get_user_cart(user: UserOrm = Depends(get_current_user)):
         return {"items": items_with_products, "total_price": total_price}
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
+
+@product_router.get("/product/image/{product_id}")
+async def get_product_image(product_id: int):
+    image_path = os.path.join("backend", "images", f"product_{product_id}.jpg")
+    
+    if not os.path.exists(image_path):
+        raise HTTPException(status_code=404, detail="Image not found")
+    
+    return FileResponse(image_path)
 
 @cart_router.post("/add")
 async def add_in_cart(product_id: int, quantity: int, user: UserOrm = Depends(get_current_user)):
@@ -135,3 +149,13 @@ async def get_order_details(order_id: int, user: UserOrm = Depends(get_current_u
         return order
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
+
+
+@order_router.get("/order/image/{product_id}")
+async def get_order_image(product_id: int):
+    image_path = os.path.join("backend", "images", f"product_{product_id}.jpg")
+    
+    if not os.path.exists(image_path):
+        raise HTTPException(status_code=404, detail="Image not found")
+    
+    return FileResponse(image_path)
